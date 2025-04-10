@@ -1,6 +1,5 @@
 
 import java.awt.Color;
-import java.awt.SecondaryLoop;
 
 
 public class Steganography {
@@ -19,18 +18,24 @@ public class Steganography {
         // Picture copy3 = revealPicture(copy2); 
         // copy3.explore(); 
 
-        Picture beach = new Picture("beach.jpg"); 
-        Picture robot = new Picture("robot.jpg"); 
-        Picture flower1 = new Picture("flower1.jpg");
-        beach.explore(); 
+        // Picture beach = new Picture("beach.jpg"); 
+        // Picture robot = new Picture("robot.jpg"); 
+        // Picture flower1 = new Picture("flower1.jpg");
+        // beach.explore(); 
         
-        // these lines hide 2 pictures  
-        Picture hidden1 = hidePicture(beach, robot, 65, 208); 
-        Picture hidden2 = hidePicture(hidden1, flower1, 280, 110); 
-        hidden2.explore(); 
+        // // these lines hide 2 pictures  
+        // Picture hidden1 = hidePicture(beach, robot, 65, 208); 
+        // Picture hidden2 = hidePicture(hidden1, flower1, 280, 110); 
+        // hidden2.explore(); 
         
-        Picture unhidden = revealPicture(hidden2); 
-        unhidden.explore(); 
+        // Picture unhidden = revealPicture(hidden2); 
+        // unhidden.explore(); 
+
+        Picture swan = new Picture("swan.jpg"); 
+        Picture swan2 = new Picture("swan.jpg"); 
+        System.out.println("Swan and swan2 are the same: " + isSame(swan, swan2)); 
+        swan = testClearLow(swan); 
+        System.out.println("Swan and swan2 are the same (af fter clearLow run on swan): " + isSame(swan, swan2)); 
 
     }
 
@@ -125,27 +130,35 @@ public class Steganography {
      *  @return combined Picture with secret h hidden in source * 
      * precondition: source is same width and height as secret */ 
     public static Picture hidePicture(Picture source, Picture secret, int startRow, int startColumn) {
-        Picture source = new Picture(source);
-
+        Picture s = new Picture(source);
         Pixel[][] sec = secret.getPixels2D(); 
-        Pixel[][] sor = source.getPixels2D(); 
-        // for (int r = startRow; r < sou.length; r++){ 
-        //     for (int c = startColumn; c < sou[0].length; c++ ) { 
-        //         // Color col = sou[r][c].getColor(); 
-        //         int red = (sec[r][c].getRed()/64)*(sec[r][c].getRed()%4);
-        //         int green = (sec[r][c].getGreen()/4)*(sec[r][c].getGreen()%4);
-        //         int blue = (sec[r][c].getBlue()/4)*(sec[r][c].getBlue()%4);
-
-        //         sou[r][c].setColor(new Color(red, green, blue));
-        //     }
-        // } 
-        // return source;
-        
-        for(int SorR=startRow , int SecR=0 ; SorR<sor.length && SecR<sec.length; SorR++. SecR++){
-            for(int SorC = startColumn, int SecC=0; SorC<sor[0].length && SecC<sec[0].length; SorC++, SecC++ ){
-                setLow(source[SorR][SorC], sec[SecR][SecC].getColor(0));
+        Pixel[][] sor = s.getPixels2D(); 
+        for(int SorR=startRow, SecR=0 ; SorR<sor.length && SecR<sec.length; SorR++, SecR++){
+            for(int SorC = startColumn, SecC=0; SorC<sor[0].length && SecC<sec[0].length; SorC++, SecC++ ){
+                Pixel p = sec[SecR][SecC];
+                Color col = p.getColor();
+                setLow(sor[SorR][SorC], col);
             }
         } 
         return source;
+    }
+
+    public static boolean isSame(Picture a, Picture b){
+        Boolean same = false;
+        if(canHide(a,b) == true){
+            Pixel[][] A = a.getPixels2D(); 
+            Pixel[][] B = b.getPixels2D(); 
+            for (int r = 0; r < A.length; r++){ 
+                for (int c = 0; c < A[0].length; c++ ) { 
+                    if(A[r][c].getColor() != B[r][c].getColor()){
+                        same = false;
+                    }
+                }
+            }
+            
+        } else if (canHide(a,b) == false){
+            same = false;
+        }
+        return same;
     }
 }
