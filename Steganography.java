@@ -9,14 +9,14 @@ public class Steganography {
         // Picture copy = testClearLow(beach); 
         // copy.explore();
 
-        // Picture beach2 = new Picture ("beach.jpg"); 
-        // beach2.explore(); 
-        // Picture copy2 = testSetLow(beach2, Color.PINK); 
-        // copy2.explore(); 
+        Picture beach2 = new Picture ("beach.jpg"); 
+        beach2.explore(); 
+        Picture copy2 = testSetLow(beach2, Color.PINK); 
+        copy2.explore(); 
 
 
-        // Picture copy3 = revealPicture(copy2); 
-        // copy3.explore(); 
+        Picture copy3 = revealPicture(copy2); 
+        copy3.explore(); 
 
         // Picture beach = new Picture("beach.jpg"); 
         // Picture robot = new Picture("robot.jpg"); 
@@ -117,7 +117,7 @@ public class Steganography {
      * * @param secret is not nul ll * 
      * @return true if secret can be hidden in source, false e otherwise. */
      public static boolean canHide(Picture source, Picture secret) {
-        if(source.getWidth() == secret.getWidth() && source.getHeight() == secret.getHeight()){
+        if(source.getWidth() >= secret.getWidth() && source.getHeight() >= secret.getHeight()){
             return true;
         } else{
             return false;
@@ -144,21 +144,22 @@ public class Steganography {
     }
 
     public static boolean isSame(Picture a, Picture b){
-        Boolean same = false;
-        if(canHide(a,b) == true){
-            Pixel[][] A = a.getPixels2D(); 
-            Pixel[][] B = b.getPixels2D(); 
-            for (int r = 0; r < A.length; r++){ 
-                for (int c = 0; c < A[0].length; c++ ) { 
-                    if(A[r][c].getColor() != B[r][c].getColor()){
-                        same = false;
-                    }
+        if(a.getHeight() != b.getHeight() || a.getWidth() != b.getWidth())
+            return false;
+
+        Pixel[][] A = a.getPixels2D(); 
+        Pixel[][] B = b.getPixels2D(); 
+        for (int r = 0; r < A.length; r++){ 
+            for (int c = 0; c < A[0].length; c++ ) { 
+                if(!A[r][c].getColor().equals(B[r][c].getColor())){
+                    return false;
                 }
             }
-            
-        } else if (canHide(a,b) == false){
-            same = false;
         }
-        return same;
+        return true;
     }
+
+    // public static ArrayList<Integer> findDifferences(Picture a, Picture b){
+
+    // }
 }
