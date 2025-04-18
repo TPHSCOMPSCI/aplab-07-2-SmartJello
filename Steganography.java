@@ -1,13 +1,15 @@
 
 import java.awt.Color;
+import java.awt.Point;
+import java.util.ArrayList;
 
 
 public class Steganography {
     public static void main(String[] args) {
-        // Picture beach = new Picture ("beach.jpg"); 
-        // beach.explore(); 
-        // Picture copy = testClearLow(beach); 
-        // copy.explore();
+        Picture beach = new Picture ("beach.jpg"); 
+        beach.explore(); 
+        Picture copy = testClearLow(beach); 
+        copy.explore();
 
         Picture beach2 = new Picture ("beach.jpg"); 
         beach2.explore(); 
@@ -15,8 +17,8 @@ public class Steganography {
         copy2.explore(); 
 
 
-        Picture copy3 = revealPicture(copy2); 
-        copy3.explore(); 
+        // Picture copy3 = revealPicture(copy2); 
+        // copy3.explore(); 
 
         // Picture beach = new Picture("beach.jpg"); 
         // Picture robot = new Picture("robot.jpg"); 
@@ -31,11 +33,31 @@ public class Steganography {
         // Picture unhidden = revealPicture(hidden2); 
         // unhidden.explore(); 
 
-        Picture swan = new Picture("swan.jpg"); 
-        Picture swan2 = new Picture("swan.jpg"); 
-        System.out.println("Swan and swan2 are the same: " + isSame(swan, swan2)); 
-        swan = testClearLow(swan); 
-        System.out.println("Swan and swan2 are the same (af fter clearLow run on swan): " + isSame(swan, swan2)); 
+            //Test if isSame
+        // Picture swan = new Picture("swan.jpg"); 
+        // Picture swan2 = new Picture("swan.jpg"); 
+        // System.out.println("Swan and swan2 are the same: " + isSame(swan, swan2)); 
+        // swan = testClearLow(swan); 
+        // System.out.println("Swan and swan2 are the same (af fter clearLow run on swan): " + isSame(swan, swan2)); 
+
+        Picture arch = new Picture("arch.jpg"); 
+        Picture koala = new Picture("koala.jpg"); 
+        Picture robot1 = new Picture("robot.jpg"); 
+
+        
+        Picture arch2 = arch;
+        ArrayList<Point> pointList = findDifferences(arch, arch2); 
+        System.out.println("PointList after comparing two identical pictures" + "has a size of " + pointList.size()); 
+
+        pointList = findDifferences(arch, koala) ;
+        System.out.println("PointList after comparing two different sized pictures has a size of " + pointList.size()); 
+        arch2 = hidePicture(arch, robot1, 65, 102); 
+        
+        pointList = findDifferences(arch, arch2); 
+        System.out.println("Pointlist after hiding a picture has a size of " + pointList.size()); 
+        
+        arch.show(); 
+        arch2.show(); 
 
     }
 
@@ -131,9 +153,10 @@ public class Steganography {
      * precondition: source is same width and height as secret */ 
     public static Picture hidePicture(Picture source, Picture secret, int startRow, int startColumn) {
         Picture s = new Picture(source);
-        Pixel[][] sec = secret.getPixels2D(); 
         Pixel[][] sor = s.getPixels2D(); 
-        for(int SorR=startRow, SecR=0 ; SorR<sor.length && SecR<sec.length; SorR++, SecR++){
+        Pixel[][] sec = secret.getPixels2D(); 
+        
+        for(int SecR=0, SorR=startRow ; SecR<sec.length && SorR<sor.length; SorR++, SecR++){
             for(int SorC = startColumn, SecC=0; SorC<sor[0].length && SecC<sec[0].length; SorC++, SecC++ ){
                 Pixel p = sec[SecR][SecC];
                 Color col = p.getColor();
@@ -159,7 +182,37 @@ public class Steganography {
         return true;
     }
 
-    // public static ArrayList<Integer> findDifferences(Picture a, Picture b){
+    public static ArrayList<Point> findDifferences(Picture a, Picture b){
+        ArrayList<Point> list = new ArrayList<>();
+        Pixel[][] A = a.getPixels2D(); 
+        Pixel[][] B = b.getPixels2D(); 
+        if(a.getHeight() != b.getHeight() || a.getWidth() != b.getWidth())
+            return list;
+        Pixel aa = null;
+        Pixel bb = null;
+        for (int r = 0; r < A.length; r++){ 
+            for (int c = 0; c < A[0].length; c++ ) { 
+                aa = A[r][c];
+                bb = B[r][c];
+                if(!aa.getColor().equals(bb.getColor())){
+                    Point point = new Point(r,c);
+                    list.add(point);
+                }
+            }
+        }
+        return list;
+    }
 
-    // }
+
+
+    public static Picture showDifferentArea(Picture pic, ArrayList<Point> diff){
+        for(Point p : diff){
+            pic.getPixel((int) p.getX(),(int) p.getY()).setColor(Color.RED);
+        }
+        return pic;
+    }
+
+
+
+
 }
