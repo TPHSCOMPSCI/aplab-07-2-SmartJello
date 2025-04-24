@@ -293,8 +293,7 @@ public static String decodeString(ArrayList<Integer> codes)
     }
         else
     {
-        result = result +
-        alpha.substring(codes.get(i)-1,codes.get(i));
+        result = result + alpha.substring(codes.get(i)-1,codes.get(i));
     }
     }
     return result;
